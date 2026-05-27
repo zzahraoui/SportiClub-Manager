@@ -49,7 +49,7 @@ public class CsvImporter {
             String line;
             boolean headerSkipped = false;
             while ((line = reader.readLine()) != null) {
-                line = line.trim();
+                line = stripBom(line).trim();
                 if (line.isEmpty()) {
                     continue;
                 }
@@ -57,7 +57,7 @@ public class CsvImporter {
                     headerSkipped = true;
                     continue;
                 }
-                String[] parts = line.split(",", -1);
+                String[] parts = splitLine(line);
                 int offset = parts.length >= 7 ? 1 : 0;
                 if (parts.length < 7 + offset) {
                     skipped++;
@@ -96,7 +96,7 @@ public class CsvImporter {
             String line;
             boolean headerSkipped = false;
             while ((line = reader.readLine()) != null) {
-                line = line.trim();
+                line = stripBom(line).trim();
                 if (line.isEmpty()) {
                     continue;
                 }
@@ -104,7 +104,7 @@ public class CsvImporter {
                     headerSkipped = true;
                     continue;
                 }
-                String[] parts = line.split(",", -1);
+                String[] parts = splitLine(line);
                 int offset = parts.length >= 8 ? 1 : 0;
                 if (parts.length < 6 + offset) {
                     skipped++;
@@ -139,6 +139,20 @@ public class CsvImporter {
         String normalized = value.trim().toLowerCase();
         return normalized.equals("oui") || normalized.equals("true") || normalized.equals("1")
                 || normalized.equals("yes");
+    }
+
+    private static String[] splitLine(String line) {
+        if (line.contains(";") && !line.contains(",")) {
+            return line.split(";", -1);
+        }
+        return line.split(",", -1);
+    }
+
+    private static String stripBom(String line) {
+        if (line != null && !line.isEmpty() && line.charAt(0) == '\uFEFF') {
+            return line.substring(1);
+        }
+        return line;
     }
 
     private static void addError(List<String> errors, String message) {
