@@ -12,6 +12,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import java.util.List;
 
 public class AbonnementView {
 
@@ -174,9 +175,9 @@ public class AbonnementView {
         colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
         colMembre.setCellValueFactory(new PropertyValueFactory<>("membreId"));
 
-        tableView.getColumns().addAll(
+        tableView.getColumns().addAll(List.of(
                 colId, colType, colPrix, colDuree,
-                colDebut, colFin, colStatut, colMembre);
+                colDebut, colFin, colStatut, colMembre));
         tableView.setItems(abonnementList);
         tableView.setPrefHeight(300);
 

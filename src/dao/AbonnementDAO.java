@@ -18,10 +18,20 @@ public class AbonnementDAO {
         this.connection = Database.getConnection();
     }
 
+    private boolean ensureConnection() {
+        if (connection == null) {
+            System.out.println("Connexion MySQL indisponible (abonnements).");
+            return false;
+        }
+        return true;
+    }
+
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // BLOC 2 — CREATE
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public void create(Abonnement a) {
+        if (!ensureConnection())
+            return;
         String sql = "INSERT INTO abonnements (typeOffre, prixMensuel, dureeEngagement, "
                 + "dateDebut, statut, membreId) VALUES (?, ?, ?, ?, ?, ?)";
         try {
@@ -44,6 +54,8 @@ public class AbonnementDAO {
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public List<Abonnement> findAll() {
         List<Abonnement> abonnements = new ArrayList<>();
+        if (!ensureConnection())
+            return abonnements;
         String sql = "SELECT * FROM abonnements";
         try {
             Statement stmt = connection.createStatement();
@@ -70,6 +82,8 @@ public class AbonnementDAO {
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public List<Abonnement> findByMembre(int membreId) {
         List<Abonnement> abonnements = new ArrayList<>();
+        if (!ensureConnection())
+            return abonnements;
         String sql = "SELECT * FROM abonnements WHERE membreId = ?";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -96,6 +110,8 @@ public class AbonnementDAO {
     // BLOC 5 — UPDATE
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public void update(Abonnement a) {
+        if (!ensureConnection())
+            return;
         String sql = "UPDATE abonnements SET typeOffre=?, prixMensuel=?, "
                 + "dureeEngagement=?, dateDebut=?, statut=?, membreId=? "
                 + "WHERE id=?";
@@ -119,6 +135,8 @@ public class AbonnementDAO {
     // BLOC 6 — DELETE
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public void delete(int id) {
+        if (!ensureConnection())
+            return;
         String sql = "DELETE FROM abonnements WHERE id=?";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);

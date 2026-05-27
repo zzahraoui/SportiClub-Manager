@@ -16,10 +16,20 @@ public class MembreDAO {
         this.connection = Database.getConnection();
     }
 
+    private boolean ensureConnection() {
+        if (connection == null) {
+            System.out.println("Connexion MySQL indisponible (membres).");
+            return false;
+        }
+        return true;
+    }
+
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // BLOC 2 — CREATE
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public void create(Membre m) {
+        if (!ensureConnection())
+            return;
         String sql = "INSERT INTO membres (nom, prenom, email, telephone, dateNaissance, actif) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
         try {
@@ -42,6 +52,8 @@ public class MembreDAO {
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public List<Membre> findAll() {
         List<Membre> membres = new ArrayList<>();
+        if (!ensureConnection())
+            return membres;
         String sql = "SELECT * FROM membres";
         try {
             Statement stmt = connection.createStatement();
@@ -67,6 +79,8 @@ public class MembreDAO {
     // BLOC 4 — UPDATE
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public void update(Membre m) {
+        if (!ensureConnection())
+            return;
         String sql = "UPDATE membres SET nom=?, prenom=?, email=?, "
                 + "telephone=?, dateNaissance=?, actif=? WHERE id=?";
         try {
@@ -89,6 +103,8 @@ public class MembreDAO {
     // BLOC 5 — DELETE
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     public void delete(int id) {
+        if (!ensureConnection())
+            return;
         String sql = "DELETE FROM membres WHERE id=?";
         try {
             PreparedStatement stmt = connection.prepareStatement(sql);

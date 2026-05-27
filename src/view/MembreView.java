@@ -8,7 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import java.time.LocalDate;
+import java.util.List;
 
 public class MembreView {
 
@@ -171,8 +171,8 @@ public class MembreView {
         colDob.setPrefWidth(100);
         colActif.setPrefWidth(60);
 
-        tableView.getColumns().addAll(
-                colId, colNom, colPrenom, colEmail, colTel, colDob, colActif);
+        tableView.getColumns().addAll(List.of(
+                colId, colNom, colPrenom, colEmail, colTel, colDob, colActif));
         tableView.setItems(membreList);
         tableView.setPrefHeight(300);
 
