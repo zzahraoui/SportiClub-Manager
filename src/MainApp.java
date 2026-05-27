@@ -9,6 +9,7 @@ import view.DashboardView;
 import view.MembreView;
 import javafx.scene.control.ButtonBar;
 import util.CsvExporter;
+import util.CsvImporter;
 import dao.MembreDAO;
 import dao.AbonnementDAO;
 
@@ -29,6 +30,7 @@ public class MainApp extends Application {
 
         Menu menuFichier = new Menu("Fichier");
         MenuItem itemExport = new MenuItem("Exporter CSV");
+        MenuItem itemImport = new MenuItem("Importer CSV");
 
         itemExport.setOnAction(e -> {
             // FileChooser — boîte de dialogue
@@ -72,8 +74,40 @@ public class MainApp extends Application {
         });
         MenuItem itemQuitter = new MenuItem("Quitter");
 
+        itemImport.setOnAction(e -> {
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Importer des donnees");
+            fileChooser.getExtensionFilters().add(
+                    new javafx.stage.FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+            java.io.File file = fileChooser.showOpenDialog(primaryStage);
+
+            if (file != null) {
+                Alert choix = new Alert(Alert.AlertType.CONFIRMATION);
+                choix.setTitle("Type d'import");
+                choix.setHeaderText("Que voulez-vous importer ?");
+
+                ButtonType btnMembresImport = new ButtonType("Membres");
+                ButtonType btnAbonnementsImport = new ButtonType("Abonnements");
+                ButtonType btnAnnuler = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                choix.getButtonTypes().setAll(btnMembresImport, btnAbonnementsImport, btnAnnuler);
+                choix.showAndWait().ifPresent(response -> {
+                    if (response == btnMembresImport) {
+                        CsvImporter.ImportResult result = CsvImporter.importMembres(
+                                file.getAbsolutePath(), new MembreDAO());
+                        showImportResult("Import membres", result);
+                    } else if (response == btnAbonnementsImport) {
+                        CsvImporter.ImportResult result = CsvImporter.importAbonnements(
+                                file.getAbsolutePath(), new AbonnementDAO());
+                        showImportResult("Import abonnements", result);
+                    }
+                });
+            }
+        });
+
         itemQuitter.setOnAction(e -> primaryStage.close());
-        menuFichier.getItems().addAll(itemExport, itemQuitter);
+        menuFichier.getItems().addAll(itemExport, itemImport, itemQuitter);
 
         Menu menuAide = new Menu("Aide");
         MenuItem itemAPropos = new MenuItem("À propos");
@@ -160,5 +194,22 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void showImportResult(String titre, CsvImporter.ImportResult result) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titre);
+        alert.setHeaderText(titre + " termine");
+        StringBuilder content = new StringBuilder();
+        content.append("Importes: ").append(result.getImported()).append("\n");
+        content.append("Ignorés: ").append(result.getSkipped());
+        if (!result.getErrors().isEmpty()) {
+            content.append("\n\nErreurs:\n");
+            for (String error : result.getErrors()) {
+                content.append("- ").append(error).append("\n");
+            }
+        }
+        alert.setContentText(content.toString());
+        alert.showAndWait();
     }
 }
