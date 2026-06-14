@@ -1,11 +1,11 @@
 {
+    "git.ignoreLimitWarning": true,
+    "git.enabled" : false,
+    "python.terminal.activateEnvironment": false,
     "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "C:\\javafx\\lib\\javafx.controls.jar",
-        "C:\\javafx\\lib\\javafx.fxml.jar",
-        "C:\\javafx\\lib\\javafx.graphics.jar",
-        "C:\\javafx\\lib\\javafx.base.jar",
-        "C:\\javafx\\lib\\javafx.media.jar"
+        "${workspaceFolder}/lib/mysql-connector-j-9.7.0.jar",
+        "/usr/share/java/java-openjfx/*.jar"
     ]
 }

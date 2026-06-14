@@ -80,6 +80,8 @@ public class DashboardView {
                                 .collect(Collectors.groupingBy(Abonnement::getTypeOffre, Collectors.counting()));
 
                 PieChart pieTypeOffre = new PieChart();
+                pieTypeOffre.setLegendVisible(false);
+                pieTypeOffre.setLabelsVisible(true);
                 for (TypeOffre type : TypeOffre.values()) {
                         long count = repartition.getOrDefault(type, 0L);
                         if (count > 0) {

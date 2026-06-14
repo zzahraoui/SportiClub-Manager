@@ -1,6 +1,6 @@
 package view;
 
-import dao.MembreDAO;
+import controller.MembreController;
 import model.Membre;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,9 +13,9 @@ import java.util.List;
 public class MembreView {
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // BLOC 1 — Données & DAO
+    // BLOC 1 — Controller & Données
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    private MembreDAO membreDAO = new MembreDAO();
+    private MembreController membreController = new MembreController();
     private ObservableList<Membre> membreList = FXCollections.observableArrayList();
     private TableView<Membre> tableView = new TableView<>();
 
@@ -196,7 +196,7 @@ public class MembreView {
                 tfNom.getText(), tfPrenom.getText(),
                 tfEmail.getText(), tfTelephone.getText(),
                 dpNaissance.getValue(), cbActif.isSelected());
-        membreDAO.create(m);
+        membreController.create(m);
         refreshTable();
         viderFormulaire();
         showAlert(Alert.AlertType.INFORMATION, "Succès", "Membre ajouté !");
@@ -215,7 +215,7 @@ public class MembreView {
         membreSelectionne.setTelephone(tfTelephone.getText());
         membreSelectionne.setDateNaissance(dpNaissance.getValue());
         membreSelectionne.setActif(cbActif.isSelected());
-        membreDAO.update(membreSelectionne);
+        membreController.update(membreSelectionne);
         refreshTable();
         viderFormulaire();
         showAlert(Alert.AlertType.INFORMATION, "Succès", "Membre modifié !");
@@ -232,7 +232,7 @@ public class MembreView {
         confirm.setContentText("Supprimer " + membreSelectionne + " ?");
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                membreDAO.delete(membreSelectionne.getId());
+                membreController.delete(membreSelectionne.getId());
                 refreshTable();
                 viderFormulaire();
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Membre supprimé !");
@@ -245,7 +245,7 @@ public class MembreView {
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     private void refreshTable() {
         membreList.clear();
-        membreList.addAll(membreDAO.findAll());
+        membreList.addAll(membreController.findAll());
     }
 
     private void remplirFormulaire(Membre m) {
@@ -281,17 +281,7 @@ public class MembreView {
 
     private void filtrerMembres(String recherche, String filtre) {
         membreList.clear();
-        membreDAO.findAll().stream()
-                .filter(m -> {
-                    boolean matchRecherche = recherche.isEmpty()
-                            || m.getNom().toLowerCase().contains(recherche.toLowerCase())
-                            || m.getPrenom().toLowerCase().contains(recherche.toLowerCase());
-                    boolean matchFiltre = filtre.equals("Tous")
-                            || (filtre.equals("Actifs") && m.isActif())
-                            || (filtre.equals("Inactifs") && !m.isActif());
-                    return matchRecherche && matchFiltre;
-                })
-                .forEach(membreList::add);
+        membreList.addAll(membreController.filtrerMembres(recherche, filtre));
     }
 
     private void showAlert(Alert.AlertType type, String titre, String message) {

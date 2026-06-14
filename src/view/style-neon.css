@@ -177,6 +177,38 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 210, 255, 0.35), 14, 0.2, 0, 2);
 }
 
+.date-picker-popup {
+    -fx-background-color: #121922;
+}
+
+.date-picker-popup .spinner {
+    -fx-background-color: #1a2230;
+}
+
+.date-picker-popup .spinner .label,
+.date-picker-popup .text {
+    -fx-text-fill: #e9eef5;
+}
+
+.date-picker-popup .button {
+    -fx-text-fill: #e9eef5;
+}
+
+.date-cell {
+    -fx-text-fill: #e9eef5;
+    -fx-background-color: #151b24;
+}
+
+.date-cell:focused {
+    -fx-background-color: #1d2530;
+    -fx-text-fill: #e9eef5;
+}
+
+.date-cell:selected {
+    -fx-background-color: #00d2ff;
+    -fx-text-fill: #0b0f14;
+}
+
 .table-view {
     -fx-background-color: transparent;
     -fx-border-color: #233243;
@@ -313,6 +345,10 @@
 
 .chart-plot-background {
     -fx-background-color: #101721;
+}
+
+.chart-pie-label {
+    -fx-fill: #3a3d3f;
 }
 
 .chart-vertical-grid-lines,

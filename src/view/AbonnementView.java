@@ -1,7 +1,6 @@
 package view;
 
-import dao.AbonnementDAO;
-import dao.MembreDAO;
+import controller.AbonnementController;
 import model.Abonnement;
 import model.Membre;
 import model.TypeOffre;
@@ -17,10 +16,9 @@ import java.util.List;
 public class AbonnementView {
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // BLOC 1 — DAO & Données
+    // BLOC 1 — Controller & Données
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    private AbonnementDAO abonnementDAO = new AbonnementDAO();
-    private MembreDAO membreDAO = new MembreDAO();
+    private AbonnementController abonnementController = new AbonnementController();
     private ObservableList<Abonnement> abonnementList = FXCollections.observableArrayList();
     private TableView<Abonnement> tableView = new TableView<>();
 
@@ -64,13 +62,13 @@ public class AbonnementView {
     private Accordion buildFormulaire() {
 
         // Remplir les ComboBox
-        cbTypeOffre.getItems().addAll(TypeOffre.values());
+        cbTypeOffre.getItems().addAll(abonnementController.getAllTypeOffres());
         cbTypeOffre.setValue(TypeOffre.CLASSIQUE);
 
-        cbStatut.getItems().addAll(StatutAbonnement.values());
+        cbStatut.getItems().addAll(abonnementController.getAllStatuts());
         cbStatut.setValue(StatutAbonnement.ACTIF);
 
-        cbMembre.getItems().addAll(membreDAO.findAll());
+        cbMembre.getItems().addAll(abonnementController.getAllMembres());
         cbMembre.setPromptText("Sélectionner un membre");
 
         // Spinner — éditable
@@ -203,7 +201,7 @@ public class AbonnementView {
                 dpDebut.getValue(),
                 cbStatut.getValue(),
                 cbMembre.getValue().getId());
-        abonnementDAO.create(a);
+        abonnementController.create(a);
         refreshTable();
         viderFormulaire();
         showAlert(Alert.AlertType.INFORMATION, "Succès", "Abonnement ajouté !");
@@ -222,7 +220,7 @@ public class AbonnementView {
         abonnementSelectionne.setDateDebut(dpDebut.getValue());
         abonnementSelectionne.setStatut(cbStatut.getValue());
         abonnementSelectionne.setMembreId(cbMembre.getValue().getId());
-        abonnementDAO.update(abonnementSelectionne);
+        abonnementController.update(abonnementSelectionne);
         refreshTable();
         viderFormulaire();
         showAlert(Alert.AlertType.INFORMATION, "Succès", "Abonnement modifié !");
@@ -238,7 +236,7 @@ public class AbonnementView {
         confirm.setContentText("Supprimer cet abonnement ?");
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                abonnementDAO.delete(abonnementSelectionne.getId());
+                abonnementController.delete(abonnementSelectionne.getId());
                 refreshTable();
                 viderFormulaire();
                 showAlert(Alert.AlertType.INFORMATION, "Succès", "Abonnement supprimé !");
@@ -251,7 +249,7 @@ public class AbonnementView {
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     private void refreshTable() {
         abonnementList.clear();
-        abonnementList.addAll(abonnementDAO.findAll());
+        abonnementList.addAll(abonnementController.findAll());
     }
 
     private void remplirFormulaire(Abonnement a) {
@@ -289,16 +287,7 @@ public class AbonnementView {
 
     private void filtrerAbonnements(String recherche, String filtre) {
         abonnementList.clear();
-        abonnementDAO.findAll().stream()
-                .filter(a -> {
-                    boolean matchRecherche = recherche.isEmpty()
-                            || a.getTypeOffre().name().toLowerCase()
-                                    .contains(recherche.toLowerCase());
-                    boolean matchFiltre = filtre.equals("Tous")
-                            || a.getStatut().name().equals(filtre);
-                    return matchRecherche && matchFiltre;
-                })
-                .forEach(abonnementList::add);
+        abonnementList.addAll(abonnementController.filtrerAbonnements(recherche, filtre));
     }
 
     private void showAlert(Alert.AlertType type, String titre, String message) {
