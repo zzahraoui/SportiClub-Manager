@@ -1,6 +1,11 @@
+
+
 ## Club Sportif Manager
 
 Application de bureau JavaFX pour gérer un club sportif : membres, abonnements et un tableau de bord avec graphiques. Les données sont stockées dans MySQL et l'interface utilise un style moderne.
+
+## Lien Du Drive
+https://drive.google.com/drive/folders/1pwwpiGqucMmVcaIcUSyomVyZAab2r5Ej?usp=sharing
 
 ## Fonctionnalités
 
@@ -153,6 +158,7 @@ Exemple minimal recommandé :
 bin/
 out/
 .idea/
+*.iml
 .vscode/
 ```
 
